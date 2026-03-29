@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Website Quản Lý Snippet Code Cá Nhân</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      color: #1f2937;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr 0.8fr auto auto;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+      font-family: Consolas, monospace;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-primary { background: #2563eb; color: white; }
+    .btn-dark { background: #111827; color: white; }
+    .btn-green { background: #16a34a; color: white; }
+    .btn-red { background: #dc2626; color: white; }
+    .btn-orange { background: #ea580c; color: white; }
+    .btn-gray { background: #6b7280; color: white; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin-bottom: 16px;
+      color: #111827;
+      font-size: 22px;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .snippet-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .snippet-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 16px;
+      background: #fafafa;
+    }
+
+    .snippet-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .snippet-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .snippet-meta {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .snippet-desc {
+      margin-bottom: 10px;
+      color: #374151;
+    }
+
+    .code-preview {
+      background: #111827;
+      color: #e5e7eb;
+      padding: 12px;
+      border-radius: 10px;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      max-height: 180px;
+      margin-bottom: 12px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      background: #dbeafe;
+      color: #1d4ed8;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .actions button {
+      width: auto;
+      padding: 10px 14px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-box {
+      background: #eff6ff;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-box strong {
+      display: block;
+      font-size: 24px;
+      color: #1d4ed8;
+      margin-bottom: 6px;
+    }
+
+    .ai-box {
+      background: #f9fafb;
+      border-left: 4px solid #2563eb;
+      padding: 14px;
+      border-radius: 10px;
+      margin-top: 12px;
+      color: #374151;
+      line-height: 1.6;
+    }
+
+    .empty {
+      text-align: center;
+      color: #6b7280;
+      padding: 20px;
+      border: 1px dashed #d1d5db;
+      border-radius: 12px;
+    }
+
+    .muted {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .toolbar { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Website Quản Lý Snippet Code Cá Nhân</h1>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2>Tìm kiếm và lọc</h2>
+      <div class="toolbar">
+        <input type="text" id="searchInput" placeholder="Tìm theo tiêu đề, mô tả, tag..." />
+        <select id="languageFilter">
+          <option value="">Tất cả ngôn ngữ</option>
+          <option value="HTML">HTML</option>
+          <option value="CSS">CSS</option>
+          <option value="JavaScript">JavaScript</option>
+          <option value="Python">Python</option>
+          <option value="Java">Java</option>
+          <option value="C++">C++</option>
+          <option value="PHP">PHP</option>
+        </select>
+        <select id="tagFilter">
+          <option value="">Tất cả tag</option>
+        </select>
+        <button class="btn-dark" onclick="applyFilters()">Lọc</button>
+        <button class="btn-gray" onclick="resetFilters()">Đặt lại</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h2 id="formTitle">Thêm snippet mới</h2>
+          <form id="snippetForm">
+            <input type="hidden" id="snippetId" />
+            <input type="text" id="title" placeholder="Tiêu đề snippet" required />
+            <input type="text" id="description" placeholder="Mô tả ngắn" required />
+            <select id="language" required>
+              <option value="">-- Chọn ngôn ngữ --</option>
+              <option value="HTML">HTML</option>
+              <option value="CSS">CSS</option>
+              <option value="JavaScript">JavaScript</option>
+              <option value="Python">Python</option>
+              <option value="Java">Java</option>
+              <option value="C++">C++</option>
+              <option value="PHP">PHP</option>
+            </select>
+            <input type="text" id="tags" placeholder="Tag, cách nhau bởi dấu phẩy. Ví dụ: api, login, form" />
+            <textarea id="code" placeholder="Nhập đoạn code ở đây..." required></textarea>
+            <div class="actions">
+              <button type="submit" class="btn-primary">Lưu snippet</button>
+              <button type="button" class="btn-orange" onclick="generateAISuggestion()">AI gợi ý</button>
+              <button type="button" class="btn-gray" onclick="clearForm()">Làm mới</button>
+            </div>
+            <div id="aiSuggestion" class="ai-box" style="display:none"></div>
+          </form>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>Thống kê nhanh</h2>
+          <div class="stats">
+            <div class="stat-box">
+              <strong id="totalSnippets">0</strong>
+              <span>Tổng snippet</span>
+            </div>
+            <div class="stat-box">
+              <strong id="totalLanguages">0</strong>
+              <span>Số ngôn ngữ</span>
+            </div>
+            <div class="stat-box">
+              <strong id="totalTags">0</strong>
+              <span>Tổng tag</span>
+            </div>
+          </div>
+          <p class="muted">Dữ liệu được lưu bằng LocalStorage, không cần cơ sở dữ liệu.</p>
+        </div>
+
+        <div class="card">
+          <h2>Danh sách snippet</h2>
+          <div id="snippetList" class="snippet-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const defaultSnippets = [
+      {
+        id: 1,
+        title: 'Validate Email JavaScript',
+        description: 'Kiểm tra định dạng email bằng regex.',
+        language: 'JavaScript',
+        tags: ['regex', 'form', 'validation'],
+        code: `function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}`,
+        createdAt: new Date().toLocaleString('vi-VN')
+      },
+      {
+        id: 2,
+        title: 'HTML Form Login',
+        description: 'Mẫu form đăng nhập cơ bản bằng HTML.',
+        language: 'HTML',
+        tags: ['login', 'form', 'ui'],
+        code: `<form>
+  <input type="email" placeholder="Email" />
+  <input type="password" placeholder="Mật khẩu" />
+  <button>Đăng nhập</button>
+</form>`,
+        createdAt: new Date().toLocaleString('vi-VN')
+      }
+    ];
+
+    let snippets = JSON.parse(localStorage.getItem('snippets')) || defaultSnippets;
+    let filteredSnippets = [...snippets];
+
+    function saveSnippets() {
+      localStorage.setItem('snippets', JSON.stringify(snippets));
+    }
+
+    function renderStats() {
+      document.getElementById('totalSnippets').innerText = snippets.length;
+      document.getElementById('totalLanguages').innerText = new Set(snippets.map(s => s.language)).size;
+      document.getElementById('totalTags').innerText = new Set(snippets.flatMap(s => s.tags)).size;
+    }
+
+    function renderTagOptions() {
+      const tagFilter = document.getElementById('tagFilter');
+      const uniqueTags = [...new Set(snippets.flatMap(s => s.tags))].sort();
+      tagFilter.innerHTML = '<option value="">Tất cả tag</option>';
+      uniqueTags.forEach(tag => {
+        tagFilter.innerHTML += `<option value="${tag}">${tag}</option>`;
+      });
+    }
+
+    function renderSnippets(data = filteredSnippets) {
+      const list = document.getElementById('snippetList');
+      list.innerHTML = '';
+
+      if (!data.length) {
+        list.innerHTML = '<div class="empty">Không có snippet nào phù hợp.</div>';
+        return;
+      }
+
+      data.forEach(snippet => {
+        const tagsHtml = snippet.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+        list.innerHTML += `
+          <div class="snippet-item">
+            <div class="snippet-top">
+              <div>
+                <div class="snippet-title">${snippet.title}</div>
+                <div class="snippet-meta">${snippet.language} • ${snippet.createdAt}</div>
+              </div>
+            </div>
+            <div class="snippet-desc">${snippet.description}</div>
+            <div class="tags">${tagsHtml}</div>
+            <div class="code-preview">${escapeHtml(snippet.code)}</div>
+            <div class="actions">
+              <button class="btn-green" onclick="editSnippet(${snippet.id})">Sửa</button>
+              <button class="btn-red" onclick="deleteSnippet(${snippet.id})">Xóa</button>
+              <button class="btn-dark" onclick="copySnippet(${snippet.id})">Copy</button>
+              <button class="btn-orange" onclick="explainSnippet(${snippet.id})">AI giải thích</button>
+            </div>
+            <div id="explain-${snippet.id}" class="ai-box" style="display:none"></div>
+          </div>
+        `;
+      });
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    document.getElementById('snippetForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const id = document.getElementById('snippetId').value;
+      const title = document.getElementById('title').value.trim();
+      const description = document.getElementById('description').value.trim();
+      const language = document.getElementById('language').value;
+      const tags = document.getElementById('tags').value
+        .split(',')
+        .map(tag => tag.trim())
+        .filter(Boolean);
+      const code = document.getElementById('code').value;
+
+      if (id) {
+        const index = snippets.findIndex(s => s.id == id);
+        snippets[index] = {
+          ...snippets[index],
+          title,
+          description,
+          language,
+          tags,
+          code
+        };
+        alert('Cập nhật snippet thành công');
+      } else {
+        const newSnippet = {
+          id: Date.now(),
+          title,
+          description,
+          language,
+          tags,
+          code,
+          createdAt: new Date().toLocaleString('vi-VN')
+        };
+        snippets.unshift(newSnippet);
+        alert('Thêm snippet thành công');
+      }
+
+      saveSnippets();
+      filteredSnippets = [...snippets];
+      renderAll();
+      clearForm();
+    });
+
+    function clearForm() {
+      document.getElementById('snippetId').value = '';
+      document.getElementById('title').value = '';
+      document.getElementById('description').value = '';
+      document.getElementById('language').value = '';
+      document.getElementById('tags').value = '';
+      document.getElementById('code').value = '';
+      document.getElementById('formTitle').innerText = 'Thêm snippet mới';
+      document.getElementById('aiSuggestion').style.display = 'none';
+    }
+
+    function editSnippet(id) {
+      const snippet = snippets.find(s => s.id === id);
+      if (!snippet) return;
+
+      document.getElementById('snippetId').value = snippet.id;
+      document.getElementById('title').value = snippet.title;
+      document.getElementById('description').value = snippet.description;
+      document.getElementById('language').value = snippet.language;
+      document.getElementById('tags').value = snippet.tags.join(', ');
+      document.getElementById('code').value = snippet.code;
+      document.getElementById('formTitle').innerText = 'Chỉnh sửa snippet';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteSnippet(id) {
+      if (!confirm('Bạn có chắc muốn xóa snippet này không?')) return;
+      snippets = snippets.filter(s => s.id !== id);
+      saveSnippets();
+      filteredSnippets = [...snippets];
+      renderAll();
+    }
+
+    function copySnippet(id) {
+      const snippet = snippets.find(s => s.id === id);
+      if (!snippet) return;
+      navigator.clipboard.writeText(snippet.code);
+      alert('Đã copy code vào clipboard');
+    }
+
+    function applyFilters() {
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+      const language = document.getElementById('languageFilter').value;
+      const tag = document.getElementById('tagFilter').value;
+
+      filteredSnippets = snippets.filter(snippet => {
+        const matchSearch =
+          snippet.title.toLowerCase().includes(search) ||
+          snippet.description.toLowerCase().includes(search) ||
+          snippet.tags.join(' ').toLowerCase().includes(search) ||
+          snippet.code.toLowerCase().includes(search);
+
+        const matchLanguage = !language || snippet.language === language;
+        const matchTag = !tag || snippet.tags.includes(tag);
+
+        return matchSearch && matchLanguage && matchTag;
+      });
+
+      renderSnippets(filteredSnippets);
+    }
+
+    function resetFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('languageFilter').value = '';
+      document.getElementById('tagFilter').value = '';
+      filteredSnippets = [...snippets];
+      renderSnippets(filteredSnippets);
+    }
+
+    function generateAISuggestion() {
+      const title = document.getElementById('title').value.trim();
+      const language = document.getElementById('language').value;
+      const code = document.getElementById('code').value.toLowerCase();
+      const box = document.getElementById('aiSuggestion');
+
+      if (!title && !code) {
+        alert('Hãy nhập tiêu đề hoặc code trước khi dùng AI gợi ý');
+        return;
+      }
+
+      const suggestedTags = [];
+
+      if (code.includes('fetch') || code.includes('axios') || code.includes('api')) suggestedTags.push('api');
+      if (code.includes('login') || code.includes('token') || code.includes('auth')) suggestedTags.push('auth');
+      if (code.includes('form') || code.includes('input')) suggestedTags.push('form');
+      if (code.includes('sort') || code.includes('filter') || code.includes('map')) suggestedTags.push('array');
+      if (code.includes('regex') || code.includes('test(')) suggestedTags.push('regex');
+      if (code.includes('class') || code.includes('object')) suggestedTags.push('oop');
+      if (language === 'HTML') suggestedTags.push('ui');
+      if (language === 'CSS') suggestedTags.push('style');
+      if (language === 'JavaScript') suggestedTags.push('frontend');
+
+      const uniqueTags = [...new Set(suggestedTags)];
+      const aiDescription = `AI nhận thấy đây là snippet ${language || 'code'} dùng cho mục đích ${uniqueTags.length ? uniqueTags.join(', ') : 'xử lý cơ bản'}. Bạn có thể dùng mô tả: "${title || 'Snippet này'} hỗ trợ chức năng ${uniqueTags[0] || 'lập trình cơ bản'} trong ${language || 'nhiều ngôn ngữ'}".`;
+
+      box.style.display = 'block';
+      box.innerHTML = `
+        <strong>Gợi ý AI</strong><br><br>
+        <b>Tag đề xuất:</b> ${uniqueTags.length ? uniqueTags.join(', ') : 'chưa xác định'}<br>
+        <b>Mô tả đề xuất:</b> ${aiDescription}
+      `;
+
+      if (!document.getElementById('tags').value.trim() && uniqueTags.length) {
+        document.getElementById('tags').value = uniqueTags.join(', ');
+      }
+
+      if (!document.getElementById('description').value.trim()) {
+        document.getElementById('description').value = aiDescription;
+      }
+    }
+
+    function explainSnippet(id) {
+      const snippet = snippets.find(s => s.id === id);
+      if (!snippet) return;
+
+      const box = document.getElementById(`explain-${id}`);
+      const code = snippet.code.toLowerCase();
+      let explanation = `Snippet này được viết bằng ${snippet.language}. Mục đích chính là hỗ trợ chức năng "${snippet.title}".`;
+
+      if (code.includes('fetch') || code.includes('axios')) {
+        explanation += ' Đoạn code có liên quan đến gọi API hoặc lấy dữ liệu từ server.';
+      }
+      if (code.includes('addEventListener') || code.includes('onclick')) {
+        explanation += ' Nó cũng xử lý sự kiện từ giao diện người dùng.';
+      }
+      if (code.includes('for') || code.includes('while') || code.includes('map(')) {
+        explanation += ' Có sử dụng vòng lặp hoặc duyệt dữ liệu.';
+      }
+      if (code.includes('if') || code.includes('switch')) {
+        explanation += ' Đoạn code có áp dụng điều kiện để xử lý logic.';
+      }
+      if (code.includes('form') || code.includes('input')) {
+        explanation += ' Snippet này phù hợp cho form nhập liệu hoặc giao diện web.';
+      }
+
+      explanation += ` Các tag hiện tại là: ${snippet.tags.join(', ') || 'chưa có tag'}.`;
+
+      box.style.display = 'block';
+      box.innerHTML = `<strong>AI giải thích</strong><br><br>${explanation}`;
+    }
+
+    function renderAll() {
+      renderStats();
+      renderTagOptions();
+      renderSnippets(filteredSnippets);
+    }
+
+    saveSnippets();
+    renderAll();
+  </script>
+</body>
+</html>
